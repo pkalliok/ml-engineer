@@ -1,0 +1,9 @@
+version: '2'
+services:
+ local-postgres:
+  image: postgres
+  ports:
+   - 15432:5432
+  environment:
+   POSTGRES_PASSWORD: myrootpassword
+
