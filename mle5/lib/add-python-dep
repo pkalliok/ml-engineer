@@ -1,0 +1,9 @@
+#!/bin/bash
+
+git stash
+./myenv/bin/pip install "$1"
+./myenv/bin/pip freeze > requirements.txt
+git add requirements.txt
+git commit -m "Added python dependency: $1"
+git stash pop
+
