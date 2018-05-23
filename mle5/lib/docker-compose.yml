@@ -11,4 +11,8 @@ services:
   command: >
    psql -h local-postgres -U postgres --no-password
    -c "SELECT 'Up and running'"
+ psql:
+  image: postgres
+  depends_on: [local-postgres]
+  command: psql -h local-postgres -U postgres --no-password
 
