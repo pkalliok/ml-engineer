@@ -22,6 +22,7 @@ stamps/wait-postgres: lib/docker-compose.yml stamps/start-postgres
 
 stamps/import-postgres: adult_dump.sql stamps/wait-postgres
 	cat $< | docker-compose -f lib/docker-compose.yml run psql
+	touch $@
 
 stamps/import-json: $(JSON_FILES) stamps/wait-postgres stamps/install-depends
 	for f in $(JSON_FILES); do \
