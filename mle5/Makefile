@@ -1,5 +1,5 @@
 
-JSON_FILES = adult.json adult1.json adult2.json
+JSON_FILES = adult.json adult1.json adult2.json adult3.parquet
 
 .PHONY: imports
 imports: stamps/import-postgres stamps/import-json
@@ -7,7 +7,11 @@ imports: stamps/import-postgres stamps/import-json
 myenv:
 	python3 -m venv myenv
 
-stamps/install-depends: myenv requirements.txt
+stamps/install-binary-depends:
+	sudo apt-get install libsnappy-dev
+	touch $@
+
+stamps/install-depends: myenv requirements.txt stamps/install-binary-depends
 	./myenv/bin/pip install -r requirements.txt
 	touch $@
 
@@ -26,7 +30,7 @@ stamps/import-postgres: adult_dump.sql stamps/wait-postgres
 
 stamps/import-json: $(JSON_FILES) stamps/wait-postgres stamps/install-depends
 	for f in $(JSON_FILES); do \
-		./myenv/bin/python3 lib/import_json.py $$f; done
+		./myenv/bin/python lib/import_json.py $$f; done
 	touch $@
 
 .PHONY: psql
