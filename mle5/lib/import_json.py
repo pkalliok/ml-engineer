@@ -6,9 +6,12 @@ import pandas as pd
 
 db_url = 'postgresql+psycopg2://postgres@localhost:15432/postgres'
 
-def read_parquet(filename):
-    from fastparquet import ParquetFile as pf
-    return pf(filename).to_pandas()
+def read_file(fn):
+    if fn.endswith('.parquet'):
+        from fastparquet import ParquetFile
+        return ParquetFile(fn).to_pandas()
+    if fn.endswith('.csv'): return pd.read_csv(open(fn))
+    return pd.read_json(open(fn))
 
 def import_to_sql(df, e, tablename):
     rows, cols = df.shape
@@ -16,9 +19,8 @@ def import_to_sql(df, e, tablename):
     df.to_sql(tablename, e)
 
 def import_file_to_sql(filename):
-    df = read_parquet(filename) if filename.endswith('.parquet') \
-            else pd.read_json(open(filename))
-    import_to_sql(df, create_engine(db_url), splitext(filename)[0])
+    e = create_engine(db_url)
+    import_to_sql(read_file(filename), e, splitext(filename)[0])
 
 if __name__ == '__main__':
     import sys
