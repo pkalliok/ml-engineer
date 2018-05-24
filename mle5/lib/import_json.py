@@ -10,7 +10,7 @@ def read_file(fn):
     if fn.endswith('.parquet'):
         from fastparquet import ParquetFile
         return ParquetFile(fn).to_pandas()
-    if fn.endswith('.csv'): return pd.read_csv(open(fn))
+    if fn.endswith('.csv'): return pd.read_csv(open(fn), index_col=False)
     return pd.read_json(open(fn))
 
 def import_to_sql(df, e, tablename):
