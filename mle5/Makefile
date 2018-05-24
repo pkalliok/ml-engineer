@@ -1,6 +1,9 @@
 
 JSON_FILES = adult.json adult1.json adult2.json adult3.parquet adultxml.csv
 
+.PHONY: all
+all: stamps/combine-data
+
 .PHONY: imports
 imports: stamps/import-postgres stamps/import-json
 
@@ -43,6 +46,10 @@ stamps/import-json: $(JSON_FILES:%=stamps/import-%)
 
 stamps/import-%: % stamps/wait-postgres stamps/install-depends
 	./myenv/bin/python lib/import_json.py $<
+	touch $@
+
+stamps/combine-data: lib/combine_data.sql stamps/import-postgres stamps/import-json
+	cat $< | docker-compose -f lib/docker-compose.yml run psql
 	touch $@
 
 .PHONY: psql
