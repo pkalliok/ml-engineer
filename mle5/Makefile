@@ -28,7 +28,7 @@ stamps/import-postgres: adult_dump.sql stamps/wait-postgres
 	cat $< | docker-compose -f lib/docker-compose.yml run psql
 	touch $@
 
-adultxml.csv: adult.xml Makefile lib/sanitise_adult_xml
+adultxml.csv: adult.xml lib/sanitise_adult_xml
 	sed '/<\/item>/q' $< \
 	| grep -o 'name="[^"]*' \
 	| cut -d'"' -f2 \
@@ -41,6 +41,7 @@ adultxml.csv: adult.xml Makefile lib/sanitise_adult_xml
 
 stamps/import-json: $(JSON_FILES) stamps/wait-postgres stamps/install-depends
 	for f in $(JSON_FILES); do \
+		echo "Importing $$f..."; \
 		./myenv/bin/python lib/import_json.py $$f; done
 	touch $@
 
